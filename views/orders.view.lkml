@@ -1,15 +1,6 @@
 # The name of this view in Looker is "Orders"
 view: orders {
-  # The sql_table_name parameter indicates the underlying database table
-  # to be used for all fields in this view.
   sql_table_name: public.orders ;;
-
-  # No primary key is defined for this view. In order to join this view in an Explore,
-  # define primary_key: yes on a dimension that has no repeated values.
-
-    # Here's what a typical dimension looks like in LookML.
-    # A dimension is a groupable field that can be used to filter query results.
-    # This dimension will be called "Amount Outstanding" in Explore.
 
   dimension: amount_outstanding {
     type: string
@@ -20,8 +11,6 @@ view: orders {
     type: string
     sql: ${TABLE}."amountReceived" ;;
   }
-  # Dates and timestamps can be represented in Looker using a dimension group of type: time.
-  # Looker converts dates and timestamps to the specified timeframes within the dimension group.
 
   dimension_group: created {
     type: time
@@ -66,11 +55,12 @@ view: orders {
   }
 
   dimension: total_amount {
-    type: string
-    sql: ${TABLE}."totalAmount" ;;
+    type: number
+    sql: ${TABLE}."total_amount" ;;
   }
 
   dimension: unique_id {
+    primary_key: yes
     type: string
     sql: ${TABLE}."unique_id" ;;
   }
@@ -85,7 +75,31 @@ view: orders {
     type: number
     sql: ${TABLE}."user_id" ;;
   }
+
   measure: count {
     type: count
+  }
+
+  measure: total_orders {
+    type: count_distinct
+    sql: ${unique_id} ;;
+  }
+
+  measure: processed_transactions {
+    type: count_distinct
+    sql: ${unique_id} ;;
+    filters: [status: "success"]
+  }
+
+  measure: total_revenue {
+    type: sum
+    value_format_name: decimal_2
+    sql: CAST(${total_amount} AS FLOAT) ;;
+  }
+
+  measure: avg_order_value {
+    type: average
+    value_format_name: decimal_2
+    sql: CAST(${total_amount} AS FLOAT) ;;
   }
 }

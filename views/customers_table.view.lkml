@@ -90,8 +90,10 @@ view: customers_table {
     type: number
     sql: ${TABLE}."user_id" ;;
   }
+
   measure: count {
-    type: count
+    type: count_distinct
+    sql: ${id} ;;
     drill_fields: [first_name, last_name]
   }
 }

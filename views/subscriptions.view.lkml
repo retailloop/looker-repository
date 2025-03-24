@@ -1,22 +1,18 @@
 # The name of this view in Looker is "Subscriptions"
 view: subscriptions {
-  # The sql_table_name parameter indicates the underlying database table
-  # to be used for all fields in this view.
   sql_table_name: public.subscriptions ;;
 
-  # No primary key is defined for this view. In order to join this view in an Explore,
-  # define primary_key: yes on a dimension that has no repeated values.
+  dimension: pk {
+    primary_key: yes
+    type: string
+    sql: CONCAT(CAST(${subscription_code} AS TEXT), CAST(${user_id} AS TEXT)) ;;
+  }
 
-    # Here's what a typical dimension looks like in LookML.
-    # A dimension is a groupable field that can be used to filter query results.
-    # This dimension will be called "Amount Paid" in Explore.
 
   dimension: amount_paid {
     type: string
-    sql: ${TABLE}."amount_paid" ;;
+    sql: CAST(${TABLE}."amount_paid" AS INTEGER) ;;
   }
-  # Dates and timestamps can be represented in Looker using a dimension group of type: time.
-  # Looker converts dates and timestamps to the specified timeframes within the dimension group.
 
   dimension_group: created {
     type: time
@@ -74,6 +70,12 @@ view: subscriptions {
     type: number
     sql: ${TABLE}."user_id" ;;
   }
+
+  measure: total_revenue {
+    type: sum
+    sql: ${amount_paid} ;;
+  }
+
   measure: count {
     type: count
   }

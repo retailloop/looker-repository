@@ -16,6 +16,11 @@ view: users_table {
     sql: ${TABLE}."accountName" ;;
   }
 
+  dimension: full_name {
+    type: string
+    sql: INITCAP(CONCAT(${first_name},' ',${last_name})) ;;
+  }
+
   dimension: account_number {
     type: string
     sql: ${TABLE}."accountNumber" ;;
@@ -101,6 +106,7 @@ view: users_table {
   }
 
   dimension: id {
+    primary_key: yes
     type: number
     sql: ${TABLE}."id" ;;
   }
@@ -156,7 +162,8 @@ view: users_table {
     sql: ${TABLE}."updated_at" ;;
   }
   measure: count {
-    type: count
+    type: count_distinct
+    sql: ${id} ;;
     drill_fields: [account_name, contact_name, last_name, business_name, first_name]
   }
 }

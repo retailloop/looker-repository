@@ -14,3 +14,14 @@ datagroup: retailloop_default_datagroup {
 
 persist_with: retailloop_default_datagroup
 
+explore: subscriptions {
+  join: users_table {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${subscriptions.user_id}=${users_table.id} ;;
+  }
+}
+
+explore: orders {}
+
+explore: customers_table {}
